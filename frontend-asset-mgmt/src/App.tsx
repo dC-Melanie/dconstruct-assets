@@ -42,16 +42,22 @@ const Navbar: React.FC = () => {
         <Link className="navbar-brand" to="/home">dConstruct Robotics</Link>
         <ul className="navbar-nav flex-column">
           <li className="nav-item">
-            <Link className="nav-link" to="/home">dConstruct Projects</Link>
+            <Link className="nav-link" to="/home">Branding</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/home">dConstruct Operations</Link>
+            <Link className="nav-link" to="/home">Products</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/home">dConstruct Branding</Link>
+            <Link className="nav-link" to="/home">Events</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/update">dConstruct Updates</Link>
+            <Link className="nav-link" to="/home">Guides</Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/home">Operations</Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/update">Updates</Link>
           </li>
         </ul>
       </div>

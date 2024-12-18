@@ -1,33 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { createAsset } from '../Services/assetService';
 
 const AddAssetPage: React.FC = () => {
     const navigate = useNavigate();
-    const [filename, setFilename] = useState('');
+    const [name, setName] = useState('');
+    const [category, setCategory] = useState('');
+    const [filePath, setFilePath] = useState('');
 
-    const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
-        const data = {
-            fileName: filename,
-            // Add other fields here if needed, such as file type, file size, etc.
-        };
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        // Create the new asset object
+        const newAsset = { name, category, filePath };
+
         try {
-            const response = await axios.post('http://localhost:8080/upload', data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            console.log(response.data);  // Handle server response
+            // Call the createAsset function from services
+            const createdAsset = await createAsset(newAsset);
 
-            // Redirect to home page after successful upload
-            navigate('/home');
+            // Log the created asset or handle success
+            console.log('Created new asset:', createdAsset);
+
+            // Clear the form or show a success message
+            setName('');
+            setCategory('');
+            setFilePath('');
+            alert('Asset created successfully!');
+            navigate("/home");
         } catch (error) {
-            alert("Error uploading file");
-            console.error('Error uploading file:', error);
+            // Handle error, e.g., show an error message
+            console.error('Error submitting asset:', error);
+            alert('Failed to create asset.');
         }
-
-    }
+    };
 
     return (
         <div style={{
@@ -38,28 +44,51 @@ const AddAssetPage: React.FC = () => {
             <div className="container" style={{ width: '100%', maxWidth: "500px", padding: '20px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#d3d3d3', opacity: '90%' }}>
                 <h2 className="text-center">Upload an asset</h2>
                 <form onSubmit={handleSubmit}>
+                    {/* Asset Name Field */}
                     <div className='mb-3'>
                         <label htmlFor="name" className="form-label">Asset Name</label>
-                        <input type="text" className="form-control" id="name" placeholder="" />
-                    </div>
-                    <div className='mb-3'>
-                        <label htmlFor="assetType" className="form-label">Asset Type</label>
-                        <select id="assetType" className="form-select">
-                            <option value="">Select an Asset Type</option>
-                            <option value="image">Image</option>
-                            <option value="video">Video</option>
-                            <option value="document">Document</option>
-                            <option value="audio">Audio</option>
-                        </select>
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="fileInput" className="form-label">Select File</label>
                         <input
-                            type="file"
-                            id="fileInput"
+                            type="text"
                             className="form-control"
+                            id="name"
+                            value={name}  // You can use React state to bind the value
+                            onChange={(e) => setName(e.target.value)}  // Handle changes with React's state management
+                            placeholder="Enter asset name"
                         />
                     </div>
+
+                    {/* Asset Type Field */}
+                    <div className='mb-3'>
+                        <label htmlFor="assetType" className="form-label">Asset Type</label>
+                        <select
+                            id="assetType"
+                            className="form-select"
+                            value={category}  // Bind to React state
+                            onChange={(e) => setCategory(e.target.value)}  // Update state with selected value
+                        >
+                            <option value="">Select an Asset Type</option>
+                            <option value="Branding">Branding</option>
+                            <option value="Products">Products</option>
+                            <option value="Events">Events</option>
+                            <option value="Guides">Guides</option>
+                            <option value="Operations">Operations</option>
+                        </select>
+                    </div>
+
+                    {/* File Path Field */}
+                    <div className='mb-3'>
+                        <label htmlFor="filePath" className="form-label">File Path</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="filePath"
+                            value={filePath}  // Bind the filePath state
+                            onChange={(e) => setFilePath(e.target.value)}  // Handle file path change with state
+                            placeholder="Enter file path"
+                        />
+                    </div>
+
+                    {/* Submit Button */}
                     <button type="submit" className="btn btn-primary w-100">Upload</button>
                 </form>
             </div>

@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getAllAssets } from '../Services/assetService';
+import { Asset } from '../Types/Asset';
+import DownloadTemplateButton from '../Components/downloadTemplate';
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
@@ -8,9 +11,24 @@ const HomePage: React.FC = () => {
         setActiveButton(buttonName);
     }
 
-    const handleAddClick = ()=>{
+    const handleAddClick = () => {
         navigate('/addasset');
     }
+
+
+    const [assets, setAssets] = useState<Asset[]>([]);
+    const [error, setError] = useState("");
+    useEffect(() => {
+        const fetchAssets = async () => {
+            try {
+                const assetsData = await getAllAssets();
+                setAssets(assetsData);
+            } catch (error) {
+                setError("Could not load assets.");
+            }
+        };
+        fetchAssets();
+    }, []);
 
 
     return (
@@ -22,8 +40,11 @@ const HomePage: React.FC = () => {
                 </div>
             </div>
             <div className="d-flex align-items-center justify-content-between">
-                <p className="me-5" style={{fontWeight: 'bold'}}>Categories</p>
-                <button className="btn btn-dark" style={{ width: "120px", height: "40px"}} onClick={handleAddClick}>Add asset</button>
+                <p className="me-5" style={{ fontWeight: 'bold' }}>Categories</p>
+                <div>
+                    <button className="btn btn-dark" style={{ width: "120px", height: "40px" }} onClick={handleAddClick}>Add asset</button>
+                    <DownloadTemplateButton />
+                </div>
             </div>
 
             <ul className="nav justify-content-start ">
@@ -41,6 +62,26 @@ const HomePage: React.FC = () => {
                 </li>
             </ul>
 
+            <h1>Assets List</h1>
+            <div className="container my-4">
+                <div className="row">
+                    {assets.map((asset) => (
+                        <div key={asset.id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title text-center border-bottom pb-2">{asset.name}</h5>
+                                    <img
+                                        src={asset.filePath}
+                                        alt={asset.name}
+                                        className="card-img-top"
+                                        style={{ objectFit: 'contain', height: '100px' }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     )
 }

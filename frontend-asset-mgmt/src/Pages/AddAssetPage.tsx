@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { createAsset } from '../Services/assetService';
+import DownloadTemplateButton from '../Components/downloadTemplate';
+import UploadExcelButton from '../Components/uploadTemplateButton';
 
 const AddAssetPage: React.FC = () => {
     const navigate = useNavigate();
@@ -37,11 +39,11 @@ const AddAssetPage: React.FC = () => {
 
     return (
         <div style={{
-            height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative',
+            height: '100vh', justifyContent: 'center', alignItems: 'center', position: 'relative',
             overflow: 'hidden',
         }}>
 
-            <div className="container" style={{ width: '100%', maxWidth: "500px", padding: '20px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#d3d3d3', opacity: '90%' }}>
+            <div className="container" style={{ width: '100%', maxWidth: "500px", padding: '20px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#d3d3d3', opacity: '90%', marginTop: '5%', marginBottom: '5%' }}>
                 <h2 className="text-center">Upload an asset</h2>
                 <form onSubmit={handleSubmit}>
                     {/* Asset Name Field */}
@@ -91,6 +93,14 @@ const AddAssetPage: React.FC = () => {
                     {/* Submit Button */}
                     <button type="submit" className="btn btn-primary w-100">Upload</button>
                 </form>
+
+            </div>
+
+            <div className="container" style={{ width: '100%', maxWidth: "500px", padding: '20px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#d3d3d3', opacity: '90%' }}>
+
+            <h2 className="text-center">Mass upload assets</h2>
+                <DownloadTemplateButton />
+                <UploadExcelButton />
             </div>
         </div>
     );

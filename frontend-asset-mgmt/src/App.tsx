@@ -11,7 +11,10 @@ import HomePage from './Pages/HomePage';
 import LoginPage from './Pages/LoginPage';
 import UpdatesPage from './Pages/UpdatesPage';
 import AddAssetPage from './Pages/AddAssetPage';
-
+import BrandingPage from './Pages/BrandingPage';
+import ProductPage from './Pages/ProductPage';
+import EventsPage from './Pages/EventsPage';
+import OperationsPage from './Pages/OperationsPage';
 
 function App() {
   return (
@@ -37,24 +40,24 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light flex-column position-fixed" style={{ height: '100vh', width: '250px' }}>
-      <div className="container-fluid flex-column">
-        <Link className="navbar-brand" to="/home">dConstruct Robotics</Link>
-        <ul className="navbar-nav flex-column">
+    <nav className="navbar navbar-expand-lg navbar-light flex-column position-fixed" style={{ height: '100vh', width: '250px', backgroundColor: '#333333' }}>
+      <div className="container-fluid flex-column" >
+        <Link className="navbar-brand" to="/home" style={{ color: 'white' }} >dConstruct Robotics</Link>
+        <ul className="navbar-nav flex-column" >
           <li className="nav-item">
-            <Link className="nav-link" to="/home">Branding</Link>
+            <Link className="nav-link" to="/branding" style={{ color: 'white' }} >Branding</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/home">Products</Link>
+            <Link className="nav-link" to="/product" style={{ color: 'white' }} >Products</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/home">Events</Link>
+            <Link className="nav-link" to="/events" style={{ color: 'white' }} >Events</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/home">Guides</Link>
+            <Link className="nav-link" to="/home" style={{ color: 'white' }} >Guides</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/home">Operations</Link>
+            <Link className="nav-link" to="/operations" style={{ color: 'white' }} >Operations</Link>
           </li>
           <li className="nav-item">
             <Link className="nav-link" to="/update">Updates</Link>
@@ -84,8 +87,10 @@ const MainContent: React.FC = () => {
       className="container-fluid"
       style={{
         padding: '20px',
+        backgroundColor:"#d3d3d3",
         marginLeft: leftMargin, // Apply margin when navbar is visible
-        transition: 'margin-left 0.3s ease', // Smooth transition for margin change
+        transition: 'margin-left 0.3s ease',
+        height: '100vh', 
       }}
     >
       <Routes>
@@ -93,6 +98,11 @@ const MainContent: React.FC = () => {
         <Route path="/home" element={<HomePage />} />
         <Route path="/update" element={<UpdatesPage />} />
         <Route path="/addasset" element={<AddAssetPage />} />
+
+        <Route path="/branding" element={<BrandingPage />} />
+        <Route path="/product" element={<ProductPage />} />
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/operations" element={<OperationsPage />} />
       </Routes>
     </div>
   );

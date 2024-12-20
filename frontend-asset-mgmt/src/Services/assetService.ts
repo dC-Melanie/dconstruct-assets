@@ -37,3 +37,43 @@ export const createAsset = async(newAsset: Asset): Promise<Asset>=>{
         throw error; // Throw error to be handled by the component
     }
 }
+
+export const getAssetsByCategory = async (category: string) => {
+    try {
+      // Construct the URL with the category query parameter
+      const response = await fetch(`${API_URL}/getSpecificAssets?category=${category}`);
+  
+      // Check if the response is ok (status in the range 200-299)
+      if (!response.ok) {
+        throw new Error('Failed to fetch assets');
+      }
+  
+      // Parse the response body as JSON
+      const assets = await response.json();
+      return assets;
+    } catch (error) {
+      console.error('Error fetching assets:', error);
+      throw error;
+    }
+  };
+
+  export const uploadAssets = async(file: File)=>{
+    const formData = new FormData();
+    formData.append('file', file)
+
+    try {
+        const response = await fetch(`${API_URL}/uploadAssets`, {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to upload file');
+        }
+    
+        const result = await response.json();
+        return result; // Return the result if upload is successful
+      } catch (error) {
+        throw new Error('Error uploading assets: ' + error);
+      }
+  }

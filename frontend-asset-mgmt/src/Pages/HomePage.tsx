@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllAssets } from '../Services/assetService';
 import { Asset } from '../Types/Asset';
-import DownloadTemplateButton from '../Components/downloadTemplate';
+
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
@@ -15,6 +15,9 @@ const HomePage: React.FC = () => {
         navigate('/addasset');
     }
 
+    const [option1, setOption1] = useState<string|null>(null);
+    const [option2, setOption2] = useState<string|null>(null);
+    const [option3, setOption3] = useState<string|null>(null);
 
     const [assets, setAssets] = useState<Asset[]>([]);
     const [error, setError] = useState("");
@@ -28,41 +31,92 @@ const HomePage: React.FC = () => {
             }
         };
         fetchAssets();
-    }, []);
+    }, [option1, option2, option3]);
 
 
     return (
         <div>
-            <div className="d-flex align-items-center justify-content-end">
+            <div className="d-flex align-items-center justify-content-between">
+                <div>
+                    <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>All Assets</p>
+                    <hr style={{ borderTop: '4px solid #ff3300', width: '100%', margin: '0' }} />
+                </div>
                 <div className="input-group mb-3 w-50">
                     <input type="text" className="form-control" placeholder="Enter a keyword..." aria-label="Search" aria-describedby="button-addon2" />
                     <button className="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
                 </div>
             </div>
             <div className="d-flex align-items-center justify-content-between">
-                <p className="me-5" style={{ fontWeight: 'bold' }}>Categories</p>
+                <p className="me-5" style={{ fontWeight: 'bold' }}>Sort By</p>
                 <div>
                     <button className="btn btn-dark" style={{ width: "120px", height: "40px" }} onClick={handleAddClick}>Add asset</button>
-                    <DownloadTemplateButton />
+
                 </div>
             </div>
 
-            <ul className="nav justify-content-start ">
+            <ul className="nav justify-content-start">
+                {/* Dropdown for Images */}
                 <li className="nav-item me-4">
-                    <button className={`btn custom-btn ${activeButton === 'Images' ? 'active' : ''}`} type="button" onClick={() => handleClick('Images')}>Images</button>
+                    <div className="dropdown">
+                        <button className="btn custom-btn dropdown-toggle" type="button" id="imagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {option1 || 'Select Option'}
+                        </button>
+                        <ul className="dropdown-menu" aria-labelledby="imagesDropdown">
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption1("Latest")}>Recency (Latest)</button>
+                            </li>
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption1("Earliest")}>Recency (Earliest)</button>
+                            </li>
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption1("Alphabetical")}>Alphabetical</button>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
-                <li className="nav-item me-4">
-                    <button className={`btn custom-btn ${activeButton === 'Videos' ? 'active' : ''}`} type="button" onClick={() => handleClick('Videos')}>Videos</button>
-                </li>
-                <li className="nav-item me-4">
-                    <button className={`btn custom-btn ${activeButton === 'Files' ? 'active' : ''}`} type="button" onClick={() => handleClick('Files')}>Files</button>
-                </li>
-                <li className="nav-item">
-                    <button className={`btn custom-btn ${activeButton === 'Folders' ? 'active' : ''}`} type="button" onClick={() => handleClick('Folders')}>Folders</button>
-                </li>
-            </ul>
 
-            <h1>Assets List</h1>
+                {/* Dropdown for Videos */}
+                <li className="nav-item me-4">
+                    <div className="dropdown">
+                        <button className="btn custom-btn dropdown-toggle" type="button" id="videosDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {option2 || 'Select File Type'}
+                        </button>
+                        <ul className="dropdown-menu" aria-labelledby="videosDropdown">
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption2("PNG")}>PNG</button>
+                            </li>
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption2("JPG/JPEG")}>JPG/JPEG</button>
+                            </li>
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption2("SVG")}>SVG</button>
+                            </li>
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption2("PDF")}>PDF</button>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                {/* Dropdown for Files */}
+                <li className="nav-item me-4">
+                    <div className="dropdown">
+                        <button className="btn custom-btn dropdown-toggle" type="button" id="filesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {option3||'Select Tag'}
+                        </button>
+                        <ul className="dropdown-menu" aria-labelledby="filesDropdown">
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption3("PNG")}>File Option 1</button>
+                            </li>
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption3("PNG")}>File Option 2</button>
+                            </li>
+                            <li>
+                                <button className="dropdown-item" type="button" onClick={() => setOption3("PNG")}>File Option 3</button>
+                            </li>
+                        </ul>
+                    </div>
+                </li></ul>
             <div className="container my-4">
                 <div className="row">
                     {assets.map((asset) => (
@@ -76,6 +130,13 @@ const HomePage: React.FC = () => {
                                         className="card-img-top"
                                         style={{ objectFit: 'contain', height: '100px' }}
                                     />
+                                    <a href={asset.filePath} download className="d-block">
+                                        <i
+                                            className="bi bi-download" // Bootstrap icon class for the download icon
+                                            style={{ fontSize: '15px', cursor: 'pointer', color: '#ff3300' }}
+                                        ></i>
+
+                                    </a>
                                 </div>
                             </div>
                         </div>

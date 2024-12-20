@@ -59,6 +59,8 @@ func main() {
 	// Register the /api/assets route with the GetAssets handler
 	mux.HandleFunc("/api/assets", handlers.GetAllAssets(db))
 	mux.HandleFunc("/api/createAsset", handlers.CreateAsset(db))
+	mux.HandleFunc("/api/getSpecificAssets", handlers.GetSpecificAssets(db))
+	mux.HandleFunc("/api/uploadAssets", handlers.BulkCreateAssets(db))
 
 	// Enable CORS
 	corsHandler := cors.New(cors.Options{

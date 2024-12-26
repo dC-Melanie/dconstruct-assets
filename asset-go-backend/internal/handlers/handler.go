@@ -5,28 +5,12 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
-	"github.com/xuri/excelize/v2"
-
-	"github.com/gin-gonic/gin"
+	//"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"github.com/xuri/excelize/v2"
 )
-
-// HelloHandler is a simple route that returns a hello message
-func HelloHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello, World!",
-	})
-}
-
-// GetUsersHandler returns a mock list of users (can be expanded with a database)
-func GetUsersHandler(c *gin.Context) {
-	users := []map[string]interface{}{
-		{"id": 1, "name": "John Doe", "email": "john@example.com"},
-		{"id": 2, "name": "Jane Doe", "email": "jane@example.com"},
-	}
-	c.JSON(http.StatusOK, users)
-}
 
 func GetAllAssets(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -51,6 +35,8 @@ func CreateAsset(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
+		asset.Date = time.Now() // Automatically set the current date
+
 		result := db.Create(&asset)
 		if result.Error != nil {
 			log.Println("Error creating asset: ", result.Error)
@@ -67,9 +53,8 @@ func CreateAsset(db *gorm.DB) http.HandlerFunc {
 func GetSpecificAssets(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		category := r.URL.Query().Get("category")
-		log.Println("category", category)
 		if category == "" {
-			http.Error(w, "Category paramter is required", http.StatusBadRequest)
+			http.Error(w, "Category parameter is required", http.StatusBadRequest)
 			return
 		}
 		var assetsList []models.Asset
@@ -102,45 +87,42 @@ func BulkCreateAssets(db *gorm.DB) http.HandlerFunc {
 		if err != nil {
 			http.Error(w, "Unable to read file", http.StatusInternalServerError)
 			return
-		} else {
-			log.Println("file opened")
 		}
-		sheetNames := f.GetSheetList()
-		log.Println("Available sheets:", sheetNames)
 
-		sheetName := sheetNames[0]
-		log.Println("sheet name", sheetName)
+		sheetName := f.GetSheetList()[0]
 		rows, err := f.GetRows(sheetName)
 		if err != nil {
 			http.Error(w, "Unable to get sheet rows", http.StatusInternalServerError)
 			return
 		}
-		log.Println("Rows from sheet:", rows)
+
 		var assets []models.Asset
-		for _, row := range rows[1:3] {
-			log.Println("Rows from sheet:", row)
-			if len(row) < 3 {
+		for _, row := range rows[1:] {
+			if len(row) < 6 {
 				log.Printf("Row skipped: Missing required fields")
 				continue
 			}
 			asset := models.Asset{
-				Name:     row[0],
-				FilePath: row[2],
-				Category: models.Category(row[1]),
+				Name:        row[0],
+				FilePath:    row[1],
+				Category:    row[2],
+				Description: row[3],
+				FileType:    row[4],
+				Comments:    row[5],
+				Date:        time.Now(),
 			}
 			assets = append(assets, asset)
 		}
-		log.Println("Assets from sheet:", assets)
+
 		if len(assets) > 0 {
 			for _, asset := range assets {
-				result := db.Create(&asset) // Create each asset one by one
+				result := db.Create(&asset)
 				if result.Error != nil {
 					log.Println("Error inserting asset:", result.Error)
-					http.Error(w, "Unable to insert asset", http.StatusInternalServerError)
+					http.Error(w, "Unable to insert assets", http.StatusInternalServerError)
 					return
 				}
 			}
-			log.Println("All assets inserted successfully!")
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)

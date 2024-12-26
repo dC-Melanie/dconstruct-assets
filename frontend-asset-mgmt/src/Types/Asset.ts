@@ -1,6 +1,11 @@
 export interface Asset {
-    id?: number;
+    id?: number;              // Optional id
     name: string;
     filePath: string;
-    category: string;  // or use a union type if you have predefined categories
+    category: string;
+    description: string;
+    date: string;
+    owner: string;
+    fileType: string;
+    comments?: string;        // Optional comments
 }

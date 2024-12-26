@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllAssets } from '../Services/assetService';
 import { Asset } from '../Types/Asset';
-import optionsicon from '../Assets/Options.png';
 import '../styles.css';
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const [isSortingVisible, setIsSortingVisible] = useState<boolean>(false);
+    const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null); // For the sidebar
 
     const handleSortToggle = () => {
         setIsSortingVisible(!isSortingVisible);
@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
     }, [option1, option2, option3]);
 
     return (
-        <div>
+        <div className="homepage">
             {/* Header */}
             <div className="d-flex align-items-center justify-content-between mb-3">
                 <div>
@@ -81,163 +81,7 @@ const HomePage: React.FC = () => {
             {isSortingVisible && (
                 <div className="mt-3">
                     <ul className="nav justify-content-start">
-                        {/* Dropdown for Images */}
-                        <li className="nav-item me-4">
-                            <div className="dropdown">
-                                <button
-                                    className="btn custom-btn dropdown-toggle"
-                                    type="button"
-                                    id="imagesDropdown"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    {option1 || 'Select Option'}
-                                </button>
-                                <ul
-                                    className="dropdown-menu"
-                                    aria-labelledby="imagesDropdown"
-                                >
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() =>
-                                                setOption1('Latest')
-                                            }
-                                        >
-                                            Recency (Latest)
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() =>
-                                                setOption1('Earliest')
-                                            }
-                                        >
-                                            Recency (Earliest)
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() =>
-                                                setOption1('Alphabetical')
-                                            }
-                                        >
-                                            Alphabetical
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        {/* Dropdown for Videos */}
-                        <li className="nav-item me-4">
-                            <div className="dropdown">
-                                <button
-                                    className="btn custom-btn dropdown-toggle"
-                                    type="button"
-                                    id="videosDropdown"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    {option2 || 'Select File Type'}
-                                </button>
-                                <ul
-                                    className="dropdown-menu"
-                                    aria-labelledby="videosDropdown"
-                                >
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() => setOption2('PNG')}
-                                        >
-                                            PNG
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() =>
-                                                setOption2('JPG/JPEG')
-                                            }
-                                        >
-                                            JPG/JPEG
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() => setOption2('SVG')}
-                                        >
-                                            SVG
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() => setOption2('PDF')}
-                                        >
-                                            PDF
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        {/* Dropdown for Files */}
-                        <li className="nav-item me-4">
-                            <div className="dropdown">
-                                <button
-                                    className="btn custom-btn dropdown-toggle"
-                                    type="button"
-                                    id="filesDropdown"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    {option3 || 'Select Tag'}
-                                </button>
-                                <ul
-                                    className="dropdown-menu"
-                                    aria-labelledby="filesDropdown"
-                                >
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() => setOption3('Option1')}
-                                        >
-                                            File Option 1
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() => setOption3('Option2')}
-                                        >
-                                            File Option 2
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            type="button"
-                                            onClick={() => setOption3('Option3')}
-                                        >
-                                            File Option 3
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
+                        {/* Dropdown options here */}
                     </ul>
                 </div>
             )}
@@ -258,10 +102,11 @@ const HomePage: React.FC = () => {
                                     boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
                                     overflow: 'hidden',
                                     maxWidth: '280px',
-                                    maxHeight: '150 px',
+                                    maxHeight: '150px',
                                     margin: '0 auto',
-                                    textAlign: 'center', // Ensure cards align with the header
+                                    textAlign: 'center',
                                 }}
+                                onClick={() => setSelectedAsset(asset)} // Handle click for sidebar
                             >
                                 <div className="card-body p-2">
                                     <h5
@@ -298,26 +143,77 @@ const HomePage: React.FC = () => {
                                             }}
                                         />
                                     </div>
-                                    <a
-                                        href={asset.filePath}
-                                        download
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <i
-                                            className="bi bi-download"
-                                            style={{
-                                                fontSize: '18px',
-                                                cursor: 'pointer',
-                                                color: '#007bff',
-                                            }}
-                                        ></i>
-                                    </a>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
+
+            {/* Sidebar */}
+            {selectedAsset && (
+                <div
+                    className="sidebar"
+                    style={{
+                        position: 'fixed',
+                        top: '0',
+                        right: '0',
+                        height: '100%',
+                        width: '300px',
+                        backgroundColor: '#fff',
+                        boxShadow: '-2px 0 6px rgba(0, 0, 0, 0.1)',
+                        padding: '20px',
+                        zIndex: 1000,
+                        overflowY: 'auto',
+                    }}
+                >
+                    <button
+                        style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '20px',
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => setSelectedAsset(null)}
+                    >
+                        &times;
+                    </button>
+                    <div>
+                        <img
+                            src={selectedAsset.filePath}
+                            alt={selectedAsset.name}
+                            style={{
+                                objectFit: 'contain',
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                borderRadius: '8px',
+                                marginBottom: '20px',
+                            }}
+                        />
+                        <h5>{selectedAsset.name}</h5>
+                        <p>alt={selectedAsset.description}</p>
+                        <p>
+                            <strong>Category:</strong> {selectedAsset.category}
+                        </p>
+                        <p>
+                            <strong>Owner:</strong> {selectedAsset.owner}
+                        </p>
+                        <p>
+                            <strong>Comments:</strong> {selectedAsset.comments}
+                        </p>
+                        <p>
+                            <strong>Date:</strong>{' '}
+                            {new Date(selectedAsset.date).toLocaleString()}
+                        </p>
+                        <p>
+                            <strong>File Type:</strong> {selectedAsset.fileType}
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

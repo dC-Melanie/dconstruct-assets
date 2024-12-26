@@ -66,16 +66,72 @@ const ProductPage: React.FC = () => {
             <div className="container my-4">
                 <div className="row">
                     {assets.map((asset) => (
-                        <div key={asset.id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                            <div className="card">
-                                <div className="card-body">
-                                    <h5 className="card-title text-center border-bottom pb-2">{asset.name}</h5>
-                                    <img
-                                        src={asset.filePath}
-                                        alt={asset.name}
-                                        className="card-img-top"
-                                        style={{ objectFit: 'contain', height: '100px' }}
-                                    />
+                        <div
+                            key={asset.id}
+                            className="col-12 col-sm-6 col-md-4 col-lg-2 mb-3"
+                        >
+                            <div
+                                className="card"
+                                style={{
+                                    border: '1px solid #ddd',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+                                    overflow: 'hidden',
+                                    maxWidth: '280px',
+                                    maxHeight: '150 px',
+                                    margin: '0 auto',
+                                    textAlign: 'center', // Ensure cards align with the header
+                                }}
+                            >
+                                <div className="card-body p-2">
+                                    <h5
+                                        className="card-title mb-2"
+                                        style={{
+                                            fontSize: '14px',
+                                            fontWeight: '600',
+                                            color: '#333',
+                                            borderBottom: '1px solid #ddd',
+                                            paddingBottom: '4px',
+                                        }}
+                                    >
+                                        {asset.name}
+                                    </h5>
+                                    <div
+                                        style={{
+                                            height: '120px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: '#f9f9f9',
+                                            borderRadius: '6px',
+                                            marginBottom: '8px',
+                                        }}
+                                    >
+                                        <img
+                                            src={asset.filePath}
+                                            alt={asset.name}
+                                            style={{
+                                                objectFit: 'contain',
+                                                maxWidth: '100%',
+                                                maxHeight: '100%',
+                                                borderRadius: '4px',
+                                            }}
+                                        />
+                                    </div>
+                                    <a
+                                        href={asset.filePath}
+                                        download
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <i
+                                            className="bi bi-download"
+                                            style={{
+                                                fontSize: '18px',
+                                                cursor: 'pointer',
+                                                color: '#007bff',
+                                            }}
+                                        ></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

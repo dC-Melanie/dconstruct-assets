@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllAssets } from '../Services/assetService';
 import { Asset } from '../Types/Asset';
+import optionsicon from '../Assets/Options.png';
+import '../styles.css';
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
@@ -47,21 +49,13 @@ const HomePage: React.FC = () => {
                         }}
                     />
                 </div>
-                <div className="input-group w-50">
+                <div className="input-group">
                     <input
                         type="text"
                         className="form-control"
-                        placeholder="Enter a keyword..."
+                        placeholder="Search all assets..."
                         aria-label="Search"
-                        aria-describedby="button-addon2"
                     />
-                    <button
-                        className="btn btn-outline-secondary"
-                        type="button"
-                        id="button-addon2"
-                    >
-                        Search
-                    </button>
                 </div>
             </div>
 
@@ -263,27 +257,28 @@ const HomePage: React.FC = () => {
                                     borderRadius: '8px',
                                     boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
                                     overflow: 'hidden',
-                                    maxWidth: '280px', // Reduce the card width
-                                    margin: '0 auto', // Center-align cards
+                                    maxWidth: '280px',
+                                    maxHeight: '150 px',
+                                    margin: '0 auto',
+                                    textAlign: 'center', // Ensure cards align with the header
                                 }}
                             >
                                 <div className="card-body p-2">
                                     <h5
                                         className="card-title mb-2"
                                         style={{
-                                            fontSize: '14px', // Smaller font size for titles
+                                            fontSize: '14px',
                                             fontWeight: '600',
                                             color: '#333',
                                             borderBottom: '1px solid #ddd',
                                             paddingBottom: '4px',
-                                            textAlign: 'left', // Align text to the left
                                         }}
                                     >
                                         {asset.name}
                                     </h5>
                                     <div
                                         style={{
-                                            height: '120px', // Reduced image container height
+                                            height: '120px',
                                             display: 'flex',
                                             justifyContent: 'center',
                                             alignItems: 'center',
@@ -303,29 +298,20 @@ const HomePage: React.FC = () => {
                                             }}
                                         />
                                     </div>
-                                    <div
-                                        style={{
-                                            textAlign: 'left', // Align download button to the left
-                                        }}
+                                    <a
+                                        href={asset.filePath}
+                                        download
+                                        style={{ textDecoration: 'none' }}
                                     >
-                                        <a
-                                            href={asset.filePath}
-                                            download
+                                        <i
+                                            className="bi bi-download"
                                             style={{
-                                                display: 'inline-block',
-                                                textDecoration: 'none',
+                                                fontSize: '18px',
+                                                cursor: 'pointer',
+                                                color: '#007bff',
                                             }}
-                                        >
-                                            <i
-                                                className="bi bi-download"
-                                                style={{
-                                                    fontSize: '18px', // Slightly smaller icon size
-                                                    cursor: 'pointer',
-                                                    color: '#007bff',
-                                                }}
-                                            ></i>
-                                        </a>
-                                    </div>
+                                        ></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

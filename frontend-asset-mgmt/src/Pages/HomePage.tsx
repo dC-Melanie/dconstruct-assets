@@ -254,36 +254,78 @@ const HomePage: React.FC = () => {
                     {assets.map((asset) => (
                         <div
                             key={asset.id}
-                            className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
+                            className="col-12 col-sm-6 col-md-4 col-lg-2 mb-3"
                         >
-                            <div className="card">
-                                <div className="card-body">
-                                    <h5 className="card-title text-center border-bottom pb-2">
+                            <div
+                                className="card"
+                                style={{
+                                    border: '1px solid #ddd',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+                                    overflow: 'hidden',
+                                    maxWidth: '280px', // Reduce the card width
+                                    margin: '0 auto', // Center-align cards
+                                }}
+                            >
+                                <div className="card-body p-2">
+                                    <h5
+                                        className="card-title mb-2"
+                                        style={{
+                                            fontSize: '14px', // Smaller font size for titles
+                                            fontWeight: '600',
+                                            color: '#333',
+                                            borderBottom: '1px solid #ddd',
+                                            paddingBottom: '4px',
+                                            textAlign: 'left', // Align text to the left
+                                        }}
+                                    >
                                         {asset.name}
                                     </h5>
-                                    <img
-                                        src={asset.filePath}
-                                        alt={asset.name}
-                                        className="card-img-top"
+                                    <div
                                         style={{
-                                            objectFit: 'contain',
-                                            height: '100px',
+                                            height: '120px', // Reduced image container height
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: '#f9f9f9',
+                                            borderRadius: '6px',
+                                            marginBottom: '8px',
                                         }}
-                                    />
-                                    <a
-                                        href={asset.filePath}
-                                        download
-                                        className="d-block"
                                     >
-                                        <i
-                                            className="bi bi-download"
+                                        <img
+                                            src={asset.filePath}
+                                            alt={asset.name}
                                             style={{
-                                                fontSize: '15px',
-                                                cursor: 'pointer',
-                                                color: '#ff3300',
+                                                objectFit: 'contain',
+                                                maxWidth: '100%',
+                                                maxHeight: '100%',
+                                                borderRadius: '4px',
                                             }}
-                                        ></i>
-                                    </a>
+                                        />
+                                    </div>
+                                    <div
+                                        style={{
+                                            textAlign: 'left', // Align download button to the left
+                                        }}
+                                    >
+                                        <a
+                                            href={asset.filePath}
+                                            download
+                                            style={{
+                                                display: 'inline-block',
+                                                textDecoration: 'none',
+                                            }}
+                                        >
+                                            <i
+                                                className="bi bi-download"
+                                                style={{
+                                                    fontSize: '18px', // Slightly smaller icon size
+                                                    cursor: 'pointer',
+                                                    color: '#007bff',
+                                                }}
+                                            ></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllAssets } from '../Services/assetService';
+import { getAllAssets, deleteAsset } from '../Services/assetService';
 import { Asset } from '../Types/Asset';
 import '../styles.css';
 import options from '../Options.png';
 import downloadIcon from '../Download btn.png'; // Add a download icon
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ const HomePage: React.FC = () => {
     const [option1, setOption1] = useState<string | null>(null);
     const [option2, setOption2] = useState<string | null>(null);
     const [option3, setOption3] = useState<string | null>(null);
+    const [pressCount, setPressCount] = useState<number>(0);
 
     const [assets, setAssets] = useState<Asset[]>([]);
     const [error, setError] = useState('');
@@ -35,7 +37,64 @@ const HomePage: React.FC = () => {
             }
         };
         fetchAssets();
-    }, [option1, option2, option3]);
+    }, [option1, option2, option3, pressCount]);
+
+
+    const [file, setFile] = useState<File | null>(null);
+    const [message, setMessage] = useState<string>('');
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFile(e.target.files[0]);
+        }
+    };
+
+    const handleDelete = async (filepath: string) => {
+        try {
+            const response = await deleteAsset(filepath);
+
+            // Check if the request was successful
+            if (!response.ok) {
+                throw new Error('Failed to delete the image');
+            }
+            setPressCount(pressCount + 1);
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            throw error; // Propagate error for handling in the component
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!file) {
+            setMessage('Please select a file to upload.');
+            return;
+        }
+
+        // Create FormData object to send the file
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            // Send the file to the backend API endpoint
+            const response = await fetch('http://localhost:8080/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setMessage(`File uploaded successfully! File path: ${data.filePath}`);
+            } else {
+                setMessage('Failed to upload file.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setMessage('Error uploading the file.');
+        }
+    };
+
 
     return (
         <div className="homepage">
@@ -51,14 +110,40 @@ const HomePage: React.FC = () => {
                         }}
                     />
                 </div>
-                <div className="input-group">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search all assets..."
-                        aria-label="Search"
-                    />
+                <div>
+                    <div className="input-group w-100 mb-2">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter a keyword..."
+                            aria-label="Search"
+                            aria-describedby="button-addon2"
+                        />
+                        <button
+                            className="btn btn-outline-secondary"
+                            type="button"
+                            id="button-addon2"
+                        >
+                            Search
+                        </button>
+                    </div>
+                    <div>
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                <input
+                                    type="file"
+                                    id="fileInput"
+                                    onChange={handleFileChange}
+                                    accept="image/*"  // Optional: Restrict to image files only
+                                />
+                                <button type="submit">Search by Image</button>
+                            </div>
+
+                        </form>
+                        <p>{message}</p>
+                    </div>
                 </div>
+
             </div>
 
             {/* Add Asset & Sort By */}
@@ -89,8 +174,8 @@ const HomePage: React.FC = () => {
             )}
 
             {/* Asset Cards */}
-            <div className="container my-4">
-                <div className="row">
+            <div className="container justify-content-start ms-0">
+                <div className="row justify-content-start">
                     {assets.map((asset) => (
                         <div
                             key={asset.id}
@@ -145,26 +230,28 @@ const HomePage: React.FC = () => {
                                         />
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-                                    <img
-                                        src={downloadIcon}
-                                        alt="Download"
-                                        style={{
-                                            width: '24px',
-                                            height: '24px',
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={() => {
-                                            const link = document.createElement('a');
-                                            link.href = asset.filePath;
-                                            link.download = asset.name || 'download';
-                                            document.body.appendChild(link);
-                                            link.click();
-                                            document.body.removeChild(link);
-                                        }}
-                                    />
+                                        <img
+                                            src={downloadIcon}
+                                            alt="Download"
+                                            style={{
+                                                width: '24px',
+                                                height: '24px',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => {
+                                                const link = document.createElement('a');
+                                                link.href = asset.filePath;
+                                                link.download = asset.name || 'download';
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
+                                            }}
+                                        />
+                                        <DeleteIcon onClick={() => handleDelete(asset.filePath)} />
+
                                         <img
                                             src={options}
-                                            alt="Options"
+                                            alt="Delete"
                                             style={{
                                                 width: '4px',
                                                 height: '14px',
@@ -182,79 +269,79 @@ const HomePage: React.FC = () => {
             {/* Sidebar */}
             {selectedAsset && (
                 <div
-                className="sidebar"
-                style={{
-                    position: 'fixed',
-                    top: '0',
-                    right: '0',
-                    height: '100%',
-                    width: '320px',
-                    backgroundColor: '#2d2d2d',
-                    color: '#fff',
-                    boxShadow: '-2px 0 6px rgba(0, 0, 0, 0.1)',
-                    padding: '20px',
-                    zIndex: 1000,
-                    overflowY: 'auto',
-                }}
-            >
-                <button
+                    className="sidebar"
                     style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '20px',
+                        position: 'fixed',
+                        top: '0',
+                        right: '0',
+                        height: '100%',
+                        width: '320px',
+                        backgroundColor: '#2d2d2d',
                         color: '#fff',
-                        cursor: 'pointer',
+                        boxShadow: '-2px 0 6px rgba(0, 0, 0, 0.1)',
+                        padding: '20px',
+                        zIndex: 1000,
+                        overflowY: 'auto',
                     }}
-                    onClick={() => setSelectedAsset(null)}
                 >
-                    &times;
-                </button>
-                <div>
-                    <img
-                        src={selectedAsset.filePath}
-                        alt={selectedAsset.name}
-                        style={{
-                            objectFit: 'contain',
-                            maxWidth: '100%',
-                            maxHeight: '150px',
-                            borderRadius: '8px',
-                            marginBottom: '20px',
-                            backgroundColor: '#444',
-                            padding: '10px',
-                        }}
-                    />
-                    <h5 style={{ fontWeight: 'bold', marginBottom: '10px' }}>{selectedAsset.name}</h5>
-                    <p><strong>File type:</strong> {selectedAsset.fileType}</p>
-                    <p><strong>Owner:</strong> {selectedAsset.owner}</p>
-                    <p><strong>Date added:</strong> {selectedAsset.date}</p>
-                    <p style={{ marginBottom: '20px' }}><strong>Description:</strong> {selectedAsset.description}</p>
-
                     <button
-                        onClick={() => {
-                            const link = document.createElement('a');
-                            link.href = selectedAsset.filePath;
-                            link.download = selectedAsset.name;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }}
                         style={{
-                            width: '100%',
-                            padding: '10px',
-                            backgroundColor: '#ff3300',
-                            color: '#fff',
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            background: 'none',
                             border: 'none',
-                            borderRadius: '5px',
-                            fontWeight: 'bold',
+                            fontSize: '20px',
+                            color: '#fff',
                             cursor: 'pointer',
                         }}
+                        onClick={() => setSelectedAsset(null)}
                     >
-                        Download
+                        &times;
                     </button>
-                </div>
+                    <div>
+                        <img
+                            src={selectedAsset.filePath}
+                            alt={selectedAsset.name}
+                            style={{
+                                objectFit: 'contain',
+                                maxWidth: '100%',
+                                maxHeight: '150px',
+                                borderRadius: '8px',
+                                marginBottom: '20px',
+                                backgroundColor: '#444',
+                                padding: '10px',
+                            }}
+                        />
+                        <h5 style={{ fontWeight: 'bold', marginBottom: '10px' }}>{selectedAsset.name}</h5>
+                        <p><strong>File type:</strong> {selectedAsset.fileType}</p>
+                        <p><strong>Owner:</strong> {selectedAsset.owner}</p>
+                        <p><strong>Date added:</strong> {selectedAsset.date}</p>
+                        <p style={{ marginBottom: '20px' }}><strong>Description:</strong> {selectedAsset.description}</p>
+
+                        <button
+                            onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = selectedAsset.filePath;
+                                link.download = selectedAsset.name;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                backgroundColor: '#ff3300',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '5px',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            Download
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

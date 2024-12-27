@@ -62,7 +62,7 @@ const AddAssetPage: React.FC = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 position: 'relative',
-                overflow: 'hidden',
+                overflowY: 'auto',
             }}
         >
             <div

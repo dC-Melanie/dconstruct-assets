@@ -7,7 +7,7 @@ const DownloadTemplateButton = () => {
         const wb = XLSX.utils.book_new();
         
         // Define the headers for the sheet
-        const headers = ['Name', 'Category', 'FilePath'];
+        const headers = ['Name', 'Category', 'FilePath', 'Description', 'Date', 'Owner', 'file_type', 'comments'];
         
         // Create data for the sheet, which is just the headers in this case
         const data = [

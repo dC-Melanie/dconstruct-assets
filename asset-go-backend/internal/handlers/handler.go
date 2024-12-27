@@ -104,11 +104,12 @@ func BulkCreateAssets(db *gorm.DB) http.HandlerFunc {
 			}
 			asset := models.Asset{
 				Name:        row[0],
-				FilePath:    row[1],
-				Category:    row[2],
+				FilePath:    row[2],
+				Category:    row[1],
 				Description: row[3],
-				FileType:    row[4],
-				Comments:    row[5],
+				Owner:       row[5],
+				FileType:    row[6],
+				Comments:    row[7],
 				Date:        time.Now(),
 			}
 			assets = append(assets, asset)
@@ -129,3 +130,110 @@ func BulkCreateAssets(db *gorm.DB) http.HandlerFunc {
 		json.NewEncoder(w).Encode(assets)
 	}
 }
+
+func DeleteAsset(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Extract the asset ID or filePath from the URL (using mux router in this example)
+		filePath := r.URL.Query().Get("filePath")
+
+		if filePath == "" {
+			http.Error(w, "filePath parameter is missing", http.StatusBadRequest)
+			return
+		}
+
+		// Try to find the asset in the database
+		var asset models.Asset
+		result := db.Where("file_path = ?", filePath).First(&asset)
+		if result.Error != nil {
+			// If the asset is not found, return a 404 error
+			if result.Error == gorm.ErrRecordNotFound {
+				http.Error(w, "Asset not found", http.StatusNotFound)
+				return
+			}
+			// If some other error occurs during query
+			log.Println("Error finding asset: ", result.Error)
+			http.Error(w, "Unable to find asset", http.StatusInternalServerError)
+			return
+		}
+
+		// If the asset is found, delete it
+		result = db.Delete(&asset)
+		if result.Error != nil {
+			log.Println("Error deleting asset: ", result.Error)
+			http.Error(w, "Unable to delete asset", http.StatusInternalServerError)
+			return
+		}
+
+		// Send a success response
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Asset deleted successfully"))
+	}
+}
+
+const uploadDir = "./uploads"
+
+// func uploadHandler(w http.ResponseWriter, r *httpRequest) {
+// 	w.Header().Set("Content-Type", "application/json")
+// 	err := r.ParseMultipartForm(10 << 20)
+// 	if err != nil {
+// 		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+// 		return
+// 	}
+// 	file, _, err := r.FormFile("file")
+// 	if err != nil {
+// 		http.Error(w, "Unable to read file", http.StatusBadRequest)
+// 		return
+// 	}
+// 	defer file.Close()
+
+// 	// Ensure the upload directory exists
+// 	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+// 		err = os.Mkdir(uploadDir, 0755)
+// 		if err != nil {
+// 			http.Error(w, "Unable to create upload directory", http.StatusInternalServerError)
+// 			return
+// 		}
+// 	}
+
+// 	// Check if there is an existing file and delete it
+// 	existingFilePath := filepath.Join(uploadDir, "uploaded_file")
+// 	if _, err := os.Stat(existingFilePath); err == nil {
+// 		// Delete the existing file if it exists
+// 		err = os.Remove(existingFilePath)
+// 		if err != nil {
+// 			http.Error(w, "Unable to delete old file", http.StatusInternalServerError)
+// 			return
+// 		}
+// 	}
+
+// 	// Save the new file with the same name "uploaded_file"
+// 	dst, err := os.Create(existingFilePath)
+// 	if err != nil {
+// 		http.Error(w, "Unable to save file", http.StatusInternalServerError)
+// 		return
+// 	}
+// 	defer dst.Close()
+
+// 	// Copy the uploaded file content to the destination file
+// 	_, err = io.Copy(dst, file)
+// 	if err != nil {
+// 		http.Error(w, "Error copying file", http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	cmd := exec.Command("python3", "../image_search.py")
+// 	cmd.Stdout = os.Stdout
+// 	cmd.Stderr = os.Stderr
+
+// 	errormsg := cmd.Run()
+// 	if errormsg != nil {
+// 		fmt.Println("Error executing python script", errormsg)
+// 	} else {
+// 		fmt.Println("Python script exec success")
+// 	}
+
+// }
+
+// func getSimilarImage(){
+
+// }

@@ -77,3 +77,21 @@ export const getAssetsByCategory = async (category: string) => {
         throw new Error('Error uploading assets: ' + error);
       }
   }
+
+  export const deleteAsset = async (filepath: string) => {
+    try {
+      const response = await fetch(`${API_URL}/delete-image?filePath=${encodeURIComponent(filepath)}`, {
+        method: 'DELETE', // HTTP method for deletion
+      });
+  
+      // If response is not OK, throw an error
+      if (!response.ok) {
+        throw new Error('Failed to delete the image');
+      }
+  
+      return response; // Return the successful response
+    } catch (error) {
+      console.error('Error deleting asset:', error);
+      throw error; // Propagate error for handling in the component
+    }
+  };

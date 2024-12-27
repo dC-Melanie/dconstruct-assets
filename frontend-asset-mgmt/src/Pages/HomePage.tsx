@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { getAllAssets } from '../Services/assetService';
 import { Asset } from '../Types/Asset';
 import '../styles.css';
+import options from '../Options.png';
+import downloadIcon from '../Download btn.png'; // Add a download icon
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
@@ -102,7 +104,6 @@ const HomePage: React.FC = () => {
                                     boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
                                     overflow: 'hidden',
                                     maxWidth: '280px',
-                                    maxHeight: '150px',
                                     margin: '0 auto',
                                     textAlign: 'center',
                                 }}
@@ -143,6 +144,34 @@ const HomePage: React.FC = () => {
                                             }}
                                         />
                                     </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                                    <img
+                                        src={downloadIcon}
+                                        alt="Download"
+                                        style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={() => {
+                                            const link = document.createElement('a');
+                                            link.href = asset.filePath;
+                                            link.download = asset.name || 'download';
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+                                        }}
+                                    />
+                                        <img
+                                            src={options}
+                                            alt="Options"
+                                            style={{
+                                                width: '4px',
+                                                height: '14px',
+                                                cursor: 'pointer',
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -153,65 +182,79 @@ const HomePage: React.FC = () => {
             {/* Sidebar */}
             {selectedAsset && (
                 <div
-                    className="sidebar"
+                className="sidebar"
+                style={{
+                    position: 'fixed',
+                    top: '0',
+                    right: '0',
+                    height: '100%',
+                    width: '320px',
+                    backgroundColor: '#2d2d2d',
+                    color: '#fff',
+                    boxShadow: '-2px 0 6px rgba(0, 0, 0, 0.1)',
+                    padding: '20px',
+                    zIndex: 1000,
+                    overflowY: 'auto',
+                }}
+            >
+                <button
                     style={{
-                        position: 'fixed',
-                        top: '0',
-                        right: '0',
-                        height: '100%',
-                        width: '300px',
-                        backgroundColor: '#fff',
-                        boxShadow: '-2px 0 6px rgba(0, 0, 0, 0.1)',
-                        padding: '20px',
-                        zIndex: 1000,
-                        overflowY: 'auto',
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '20px',
+                        color: '#fff',
+                        cursor: 'pointer',
                     }}
+                    onClick={() => setSelectedAsset(null)}
                 >
-                    <button
+                    &times;
+                </button>
+                <div>
+                    <img
+                        src={selectedAsset.filePath}
+                        alt={selectedAsset.name}
                         style={{
-                            position: 'absolute',
-                            top: '10px',
-                            right: '10px',
-                            background: 'none',
+                            objectFit: 'contain',
+                            maxWidth: '100%',
+                            maxHeight: '150px',
+                            borderRadius: '8px',
+                            marginBottom: '20px',
+                            backgroundColor: '#444',
+                            padding: '10px',
+                        }}
+                    />
+                    <h5 style={{ fontWeight: 'bold', marginBottom: '10px' }}>{selectedAsset.name}</h5>
+                    <p><strong>File type:</strong> {selectedAsset.fileType}</p>
+                    <p><strong>Owner:</strong> {selectedAsset.owner}</p>
+                    <p><strong>Date added:</strong> {selectedAsset.date}</p>
+                    <p style={{ marginBottom: '20px' }}><strong>Description:</strong> {selectedAsset.description}</p>
+
+                    <button
+                        onClick={() => {
+                            const link = document.createElement('a');
+                            link.href = selectedAsset.filePath;
+                            link.download = selectedAsset.name;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }}
+                        style={{
+                            width: '100%',
+                            padding: '10px',
+                            backgroundColor: '#ff3300',
+                            color: '#fff',
                             border: 'none',
-                            fontSize: '20px',
+                            borderRadius: '5px',
+                            fontWeight: 'bold',
                             cursor: 'pointer',
                         }}
-                        onClick={() => setSelectedAsset(null)}
                     >
-                        &times;
+                        Download
                     </button>
-                    <div>
-                        <img
-                            src={selectedAsset.filePath}
-                            alt={selectedAsset.name}
-                            style={{
-                                objectFit: 'contain',
-                                maxWidth: '100%',
-                                maxHeight: '100%',
-                                borderRadius: '8px',
-                                marginBottom: '20px',
-                            }}
-                        />
-                        <h5>{selectedAsset.name}</h5>
-                        <p>alt={selectedAsset.description}</p>
-                        <p>
-                            <strong>Category:</strong> {selectedAsset.category}
-                        </p>
-                        <p>
-                            <strong>Owner:</strong> {selectedAsset.owner}
-                        </p>
-                        <p>
-                            <strong>Comments:</strong> {selectedAsset.comments}
-                        </p>
-                        <p>
-                            <strong>Date:</strong>{' '}
-                            {new Date(selectedAsset.date).toLocaleString()}
-                        </p>
-                        <p>
-                            <strong>File Type:</strong> {selectedAsset.fileType}
-                        </p>
-                    </div>
+                </div>
                 </div>
             )}
         </div>

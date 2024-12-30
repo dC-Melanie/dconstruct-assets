@@ -6,6 +6,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useNavigate } from 'react-router-dom';
 
+import brandingImage from './Branding.png';
+import productImage from './Products.png';
+import eventsImage from './Events.png';
+import guidesImage from './Guides.png';
+import operationsImage from './Operations.png';
 
 import HomePage from './Pages/HomePage';
 import LoginPage from './Pages/LoginPage';
@@ -40,40 +45,73 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light flex-column position-fixed" style={{ height: '100vh', width: '250px', backgroundColor: '#333333' }}>
-      <div className="container-fluid flex-column" >
-        <Link className="navbar-brand" to="/home" style={{ color: 'white' }} >dConstruct Robotics</Link>
-        <ul className="navbar-nav flex-column" >
-          <li className="nav-item">
-            <Link className="nav-link" to="/branding" style={{ color: 'white' }} >Branding</Link>
+    <nav
+      className="navbar navbar-expand-lg navbar-light flex-column position-fixed"
+      style={{ height: "100vh", width: "250px", backgroundColor: "#333333" }}
+    >
+      <div className="container-fluid flex-column">
+        <Link className="navbar-brand" to="/home" style={{ color: "white" }}>
+          dConstruct Robotics
+        </Link>
+        <ul className="navbar-nav flex-column">
+          <li className="nav-item d-flex align-items-center">
+            <img
+              src={brandingImage}
+              alt="Branding"
+              style={{ width: "24px", height: "24px", marginRight: "10px" }}
+            />
+            <Link className="nav-link" to="/branding" style={{ color: "white" }}>
+              Branding
+            </Link>
           </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/product" style={{ color: 'white' }} >Products</Link>
+          <li className="nav-item d-flex align-items-center">
+            <img
+              src={productImage}
+              alt="Products"
+              style={{ width: "24px", height: "24px", marginRight: "10px" }}
+            />
+            <Link className="nav-link" to="/product" style={{ color: "white" }}>
+              Products
+            </Link>
           </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/events" style={{ color: 'white' }} >Events</Link>
+          <li className="nav-item d-flex align-items-center">
+            <img
+              src={eventsImage}
+              alt="Events"
+              style={{ width: "24px", height: "24px", marginRight: "10px" }}
+            />
+            <Link className="nav-link" to="/events" style={{ color: "white" }}>
+              Events
+            </Link>
           </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/home" style={{ color: 'white' }} >Guides</Link>
+          <li className="nav-item d-flex align-items-center">
+            <img
+              src={guidesImage}
+              alt="Guides"
+              style={{ width: "24px", height: "24px", marginRight: "10px" }}
+            />
+            <Link className="nav-link" to="/home" style={{ color: "white" }}>
+              Guides
+            </Link>
           </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/operations" style={{ color: 'white' }} >Operations</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/update">Updates</Link>
+          <li className="nav-item d-flex align-items-center">
+            <img
+              src={operationsImage}
+              alt="Operations"
+              style={{ width: "24px", height: "24px", marginRight: "10px" }}
+            />
+            <Link className="nav-link" to="/operations" style={{ color: "white" }}>
+              Operations
+            </Link>
           </li>
         </ul>
       </div>
-
-
-      <div style={{ marginBottom: "10px" }} >
+      <div style={{ marginBottom: "10px" }}>
         <button className="btn btn-dark w-100" onClick={handleLogout}>
           Logout
         </button>
       </div>
-
     </nav>
-
   );
 };
 

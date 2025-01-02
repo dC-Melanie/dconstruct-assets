@@ -29,6 +29,15 @@
   color: #61dafb;
 }
 
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.d-flex {
+  height: 100%; /* Ensure the flex container spans full height */
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -133,6 +133,7 @@ const MainContent: React.FC = () => {
         marginLeft: leftMargin, // Apply margin when navbar is visible
         transition: 'margin-left 0.3s ease',
         overflowY: 'auto',
+        minHeight: '100vh', // Ensures it spans the full viewport height
       }}
     >
       <Routes>

@@ -47,13 +47,18 @@ const Navbar: React.FC = () => {
   return (
     <nav
       className="navbar navbar-expand-lg navbar-light flex-column position-fixed"
-      style={{ height: "100vh", width: "250px", backgroundColor: "#333333" }}
+      style={{
+        height: "100vh",
+        width: "250px",
+        backgroundColor: "#333333",
+        justifyContent: "space-between", // Ensures proper spacing
+      }}
     >
-      <div className="container-fluid flex-column">
-        <Link className="navbar-brand" to="/home" style={{ color: "white" }}>
+      <div className="container-fluid flex-column align-items-start">
+        <Link className="navbar-brand" to="/home" style={{ color: "white", marginBottom: "20px" }}>
           dConstruct Robotics
         </Link>
-        <ul className="navbar-nav flex-column">
+        <ul className="navbar-nav flex-column w-100">
           <li className="nav-item d-flex align-items-center">
             <img
               src={brandingImage}
@@ -106,7 +111,7 @@ const Navbar: React.FC = () => {
           </li>
         </ul>
       </div>
-      <div style={{ marginBottom: "10px" }}>
+      <div className="w-100" style={{ padding: "10px" }}>
         <button className="btn btn-dark w-100" onClick={handleLogout}>
           Logout
         </button>
@@ -114,7 +119,6 @@ const Navbar: React.FC = () => {
     </nav>
   );
 };
-
 
 const MainContent: React.FC = () => {
   const location = useLocation();
@@ -125,7 +129,7 @@ const MainContent: React.FC = () => {
       className="container-fluid"
       style={{
         padding: '20px',
-        backgroundColor:"#d3d3d3",
+        backgroundColor: "#d3d3d3",
         marginLeft: leftMargin, // Apply margin when navbar is visible
         transition: 'margin-left 0.3s ease',
         overflowY: 'auto',

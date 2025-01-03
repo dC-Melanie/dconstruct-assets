@@ -1,10 +1,7 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { useNavigate } from 'react-router-dom';
 
 import brandingImage from './Branding.png';
 import productImage from './Products.png';
@@ -25,7 +22,6 @@ function App() {
   return (
     <Router>
       <div className="d-flex">
-        {/* Navbar with Link components */}
         <Navbar />
         <MainContent />
       </div>
@@ -36,6 +32,8 @@ function App() {
 const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   if (location.pathname === "/") {
     return null;
   }
@@ -44,77 +42,86 @@ const Navbar: React.FC = () => {
     navigate("/");
   };
 
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <nav
       className="navbar navbar-expand-lg navbar-light flex-column position-fixed"
       style={{
         height: "100vh",
-        width: "250px",
+        width: isCollapsed ? "80px" : "250px",
         backgroundColor: "#333333",
-        justifyContent: "space-between", // Ensures proper spacing
+        justifyContent: "space-between",
+        transition: "width 0.3s ease",
       }}
     >
       <div className="container-fluid flex-column align-items-start">
-        <Link className="navbar-brand" to="/home" style={{ color: "white", marginBottom: "20px" }}>
+        <button
+          className="btn btn-sm btn-dark mb-3"
+          onClick={toggleCollapse}
+          style={{ alignSelf: "flex-end" }}
+        >
+          {isCollapsed ? "→" : "←"}
+        </button>
+        <Link
+          className="navbar-brand"
+          to="/home"
+          style={{
+            color: "white",
+            marginBottom: "20px",
+            display: isCollapsed ? "none" : "block",
+          }}
+        >
           dConstruct Robotics
         </Link>
-        <ul className="navbar-nav flex-column w-100">
-          <li className="nav-item d-flex align-items-center">
-            <img
-              src={brandingImage}
-              alt="Branding"
-              style={{ width: "24px", height: "24px", marginRight: "10px" }}
-            />
-            <Link className="nav-link" to="/branding" style={{ color: "white" }}>
-              Branding
-            </Link>
-          </li>
-          <li className="nav-item d-flex align-items-center">
-            <img
-              src={productImage}
-              alt="Products"
-              style={{ width: "24px", height: "24px", marginRight: "10px" }}
-            />
-            <Link className="nav-link" to="/product" style={{ color: "white" }}>
-              Products
-            </Link>
-          </li>
-          <li className="nav-item d-flex align-items-center">
-            <img
-              src={eventsImage}
-              alt="Events"
-              style={{ width: "24px", height: "24px", marginRight: "10px" }}
-            />
-            <Link className="nav-link" to="/events" style={{ color: "white" }}>
-              Events
-            </Link>
-          </li>
-          <li className="nav-item d-flex align-items-center">
-            <img
-              src={guidesImage}
-              alt="Guides"
-              style={{ width: "24px", height: "24px", marginRight: "10px" }}
-            />
-            <Link className="nav-link" to="/home" style={{ color: "white" }}>
-              Guides
-            </Link>
-          </li>
-          <li className="nav-item d-flex align-items-center">
-            <img
-              src={operationsImage}
-              alt="Operations"
-              style={{ width: "24px", height: "24px", marginRight: "10px" }}
-            />
-            <Link className="nav-link" to="/operations" style={{ color: "white" }}>
-              Operations
-            </Link>
-          </li>
+        <ul
+          className="navbar-nav flex-column w-100"
+          style={{
+            gap: "20px", // Consistent spacing between items
+            paddingLeft: "10px",
+          }}
+        >
+          {[
+            { to: "/branding", icon: brandingImage, label: "Branding" },
+            { to: "/product", icon: productImage, label: "Products" },
+            { to: "/events", icon: eventsImage, label: "Events" },
+            { to: "/home", icon: guidesImage, label: "Guides" },
+            { to: "/operations", icon: operationsImage, label: "Operations" },
+          ].map((item, index) => (
+            <li
+              key={index}
+              className="nav-item d-flex align-items-center"
+              style={{
+                alignItems: "center",
+                padding: "10px 0", // Equal spacing regardless of collapse
+              }}
+            >
+              <img
+                src={item.icon}
+                alt={item.label}
+                style={{
+                  width: "24px",
+                  height: "24px",
+                  marginRight: isCollapsed ? "0" : "10px",
+                }}
+              />
+              {!isCollapsed && (
+                <Link className="nav-link" to={item.to} style={{ color: "white" }}>
+                  {item.label}
+                </Link>
+              )}
+            </li>
+          ))}
         </ul>
       </div>
       <div className="w-100" style={{ padding: "10px" }}>
-        <button className="btn btn-dark w-100" onClick={handleLogout}>
-          Logout
-        </button>
+        {!isCollapsed && (
+          <button className="btn btn-dark w-100" onClick={handleLogout}>
+            Logout
+          </button>
+        )}
       </div>
     </nav>
   );
@@ -141,7 +148,6 @@ const MainContent: React.FC = () => {
         <Route path="/home" element={<HomePage />} />
         <Route path="/update" element={<UpdatesPage />} />
         <Route path="/addasset" element={<AddAssetPage />} />
-
         <Route path="/branding" element={<BrandingPage />} />
         <Route path="/product" element={<ProductPage />} />
         <Route path="/events" element={<EventsPage />} />
